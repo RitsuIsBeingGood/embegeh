@@ -1,0 +1,333 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--color-background-tertiary);}
+.app{padding:12px;max-width:480px;margin:0 auto;}
+.header{text-align:center;padding:10px 0 14px;}
+.header h1{font-size:18px;font-weight:500;color:var(--color-text-primary);}
+.header p{font-size:12px;color:var(--color-text-secondary);margin-top:2px;}
+
+.lunchbox-wrap{background:var(--color-background-primary);border-radius:16px;border:0.5px solid var(--color-border-tertiary);padding:14px;margin-bottom:10px;}
+.lb-title{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-align:center;margin-bottom:10px;letter-spacing:0.5px;}
+.lunchbox{width:100%;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto auto;gap:6px;}
+.slot{border-radius:10px;border:2px dashed #c8c8c8;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;background:#f7f7f7;cursor:pointer;transition:all 0.15s;min-height:70px;position:relative;-webkit-user-select:none;user-select:none;}
+.slot.active-slot{border-color:#639922;border-style:solid;background:#EAF3DE;}
+.slot.filled{border-style:solid;border-color:#bbb;background:#fff;}
+.slot .s-icon{font-size:26px;line-height:1;}
+.slot .s-name{font-size:9px;color:#888;margin-top:3px;text-align:center;line-height:1.2;}
+.slot .s-label{font-size:9px;color:#aaa;text-align:center;font-weight:500;letter-spacing:0.3px;}
+.slot .del-btn{position:absolute;top:3px;right:4px;font-size:14px;color:#ccc;line-height:1;background:none;border:none;cursor:pointer;padding:0;}
+.slot-wide{grid-column:span 2;}
+.slot-drink{grid-column:span 3;}
+
+.nutri-bar{background:var(--color-background-secondary);border-radius:12px;padding:10px 12px;margin-bottom:10px;}
+.kal-row{display:flex;align-items:baseline;justify-content:center;gap:4px;margin-bottom:8px;}
+.kal-num{font-size:26px;font-weight:500;color:var(--color-text-primary);}
+.kal-unit{font-size:12px;color:var(--color-text-secondary);}
+.bars{display:flex;flex-direction:column;gap:5px;}
+.bar-row{display:flex;align-items:center;gap:8px;}
+.bar-lbl{font-size:11px;color:var(--color-text-secondary);width:70px;flex-shrink:0;}
+.bar-track{flex:1;height:7px;background:var(--color-background-tertiary);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;transition:width 0.35s;}
+.bar-val{font-size:11px;color:var(--color-text-secondary);width:32px;text-align:right;flex-shrink:0;}
+
+.btns-row{display:flex;gap:8px;margin-bottom:12px;}
+.btn-reset{flex:1;padding:11px;border-radius:10px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);font-size:13px;cursor:pointer;font-family:var(--font-sans);}
+.btn-save{flex:2;padding:11px;border-radius:10px;border:none;background:#3B6D11;color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font-sans);}
+.btn-save:active{background:#27500A;}
+.btn-reset:active{background:var(--color-background-secondary);}
+
+.menu-panel{background:var(--color-background-primary);border-radius:16px;border:0.5px solid var(--color-border-tertiary);padding:12px;}
+.menu-panel h2{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px;}
+
+.cat-scroll{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px;scrollbar-width:none;}
+.cat-scroll::-webkit-scrollbar{display:none;}
+.cat-btn{flex-shrink:0;padding:7px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);font-size:12px;cursor:pointer;background:var(--color-background-secondary);color:var(--color-text-secondary);font-family:var(--font-sans);white-space:nowrap;transition:all 0.15s;}
+.cat-btn.active{background:#3B6D11;color:#fff;border-color:#3B6D11;}
+
+.hint{font-size:11px;color:var(--color-text-secondary);text-align:center;margin-bottom:8px;padding:6px 10px;background:var(--color-background-secondary);border-radius:8px;min-height:28px;}
+.hint.ok{color:#27500A;background:#EAF3DE;}
+
+.food-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.food-card{border:0.5px solid var(--color-border-tertiary);border-radius:10px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:var(--color-background-secondary);transition:all 0.15s;-webkit-user-select:none;user-select:none;}
+.food-card:active{transform:scale(0.95);}
+.food-card.sel{border-color:#639922;border-width:2px;background:#EAF3DE;}
+.food-card .fc-icon{font-size:26px;display:block;margin-bottom:4px;}
+.food-card .fc-name{font-size:10px;color:var(--color-text-secondary);line-height:1.2;}
+.food-card .fc-kal{font-size:9px;color:var(--color-text-tertiary);margin-top:2px;}
+
+.add-btn{width:100%;margin-top:10px;padding:12px;border-radius:10px;border:none;background:#639922;color:#fff;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font-sans);display:none;}
+.add-btn:active{background:#3B6D11;}
+.add-btn.show{display:block;}
+
+.status{font-size:12px;text-align:center;color:var(--color-text-secondary);min-height:18px;margin-top:4px;}
+.saved-section{margin-top:10px;background:var(--color-background-secondary);border-radius:10px;padding:10px;}
+.saved-section h3{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px;}
+.saved-item{font-size:11px;color:var(--color-text-secondary);padding:4px 0;border-bottom:0.5px solid var(--color-border-tertiary);}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">Simulator MBG — susun menu di kotak stainless dan lihat nilai gizinya</h2>
+
+<div class="app">
+  <div class="header">
+    <h1>🍱 Simulator MBG</h1>
+    <p>Susun menu makan bergizi gratis kamu!</p>
+  </div>
+
+  <div class="lunchbox-wrap">
+    <div class="lb-title">KOTAK MAKAN STAINLESS</div>
+    <div class="lunchbox" id="lunchbox"></div>
+  </div>
+
+  <div class="nutri-bar">
+    <div class="kal-row"><span class="kal-num" id="kal">0</span><span class="kal-unit">kkal</span></div>
+    <div class="bars">
+      <div class="bar-row"><span class="bar-lbl">Karbohidrat</span><div class="bar-track"><div class="bar-fill" id="bf-k" style="background:#EF9F27;width:0%"></div></div><span class="bar-val" id="bv-k">0g</span></div>
+      <div class="bar-row"><span class="bar-lbl">Protein</span><div class="bar-track"><div class="bar-fill" id="bf-p" style="background:#378ADD;width:0%"></div></div><span class="bar-val" id="bv-p">0g</span></div>
+      <div class="bar-row"><span class="bar-lbl">Lemak</span><div class="bar-track"><div class="bar-fill" id="bf-l" style="background:#E24B4A;width:0%"></div></div><span class="bar-val" id="bv-l">0g</span></div>
+      <div class="bar-row"><span class="bar-lbl">Serat</span><div class="bar-track"><div class="bar-fill" id="bf-s" style="background:#639922;width:0%"></div></div><span class="bar-val" id="bv-s">0g</span></div>
+    </div>
+  </div>
+
+  <div class="btns-row">
+    <button class="btn-reset" onclick="resetBox()">Kosongkan</button>
+    <button class="btn-save" onclick="saveMenu()">Simpan Menu ✓</button>
+  </div>
+
+  <div class="menu-panel">
+    <h2>Pilih Makanan</h2>
+    <div class="cat-scroll" id="cat-tabs"></div>
+    <div class="hint" id="hint">Pilih kategori, lalu tap makanan yang kamu mau</div>
+    <div class="food-grid" id="food-grid"></div>
+    <button class="add-btn" id="add-btn" onclick="addSelected()">Masukkan ke Kotak</button>
+  </div>
+
+  <div class="status" id="status"></div>
+  <div id="saved-wrap" style="display:none;" class="saved-section">
+    <h3>Menu Tersimpan</h3>
+    <div id="saved-items"></div>
+  </div>
+</div>
+
+<script>
+const SLOTS = [
+  {id:'karbo', label:'Karbohidrat', cat:'Karbohidrat', wide:true},
+  {id:'protein', label:'Protein', cat:'Protein', wide:false},
+  {id:'sayur', label:'Sayur', cat:'Sayur', wide:false},
+  {id:'buah', label:'Buah', cat:'Buah', wide:false},
+  {id:'lauk', label:'Lauk', cat:'Lauk', wide:false},
+  {id:'minum', label:'Minuman', cat:'Minuman', wide:true, drink:true},
+];
+
+const FOODS = {
+  Karbohidrat:[
+    {n:'Nasi putih',i:'🍚',kal:175,k:38,p:3,l:0.3,s:0.6},
+    {n:'Nasi merah',i:'🍙',kal:160,k:34,p:3.5,l:1,s:1.8},
+    {n:'Kentang rebus',i:'🥔',kal:130,k:30,p:2,l:0.1,s:2},
+    {n:'Roti gandum',i:'🍞',kal:140,k:27,p:4,l:2,s:2.5},
+    {n:'Singkong',i:'🌾',kal:145,k:35,p:1,l:0.2,s:1.8},
+    {n:'Jagung',i:'🌽',kal:108,k:25,p:3,l:1,s:2.4},
+    {n:'Mie ayam',i:'🍜',kal:220,k:38,p:8,l:5,s:1},
+    {n:'Lontong',i:'🫔',kal:160,k:37,p:2,l:0.3,s:0.5},
+    {n:'Bubur ayam',i:'🥣',kal:180,k:30,p:9,l:4,s:0.8},
+  ],
+  Protein:[
+    {n:'Ayam goreng',i:'🍗',kal:220,k:2,p:25,l:13,s:0},
+    {n:'Telur ceplok',i:'🍳',kal:90,k:0.5,p:7,l:7,s:0},
+    {n:'Tahu goreng',i:'🟨',kal:110,k:3,p:8,l:7,s:0.5},
+    {n:'Tempe goreng',i:'🟫',kal:160,k:10,p:11,l:9,s:1.5},
+    {n:'Ikan bakar',i:'🐟',kal:140,k:0,p:22,l:5,s:0},
+    {n:'Daging sapi',i:'🥩',kal:210,k:0,p:26,l:12,s:0},
+    {n:'Telur rebus',i:'🥚',kal:78,k:0.6,p:6,l:5,s:0},
+    {n:'Ikan goreng',i:'🐠',kal:165,k:3,p:20,l:8,s:0},
+    {n:'Udang rebus',i:'🦐',kal:100,k:1,p:19,l:2,s:0},
+  ],
+  Sayur:[
+    {n:'Bayam rebus',i:'🥬',kal:25,k:3,p:2,l:0.3,s:2},
+    {n:'Wortel',i:'🥕',kal:40,k:9,p:0.9,l:0.2,s:2.8},
+    {n:'Buncis',i:'🫛',kal:35,k:7,p:2,l:0.2,s:3},
+    {n:'Kangkung',i:'🌿',kal:22,k:3,p:2.5,l:0.3,s:2},
+    {n:'Tomat',i:'🍅',kal:20,k:4,p:1,l:0.2,s:1.2},
+    {n:'Timun',i:'🥒',kal:15,k:3,p:0.7,l:0.1,s:0.5},
+    {n:'Labu siam',i:'🟢',kal:30,k:6,p:0.8,l:0.1,s:1.7},
+    {n:'Kacang pjg',i:'🌱',kal:45,k:8,p:2.5,l:0.3,s:3},
+    {n:'Terong',i:'🍆',kal:25,k:5,p:1,l:0.2,s:2.5},
+  ],
+  Buah:[
+    {n:'Pisang',i:'🍌',kal:90,k:23,p:1,l:0.3,s:2.6},
+    {n:'Apel',i:'🍎',kal:70,k:18,p:0.4,l:0.2,s:2.4},
+    {n:'Jeruk',i:'🍊',kal:60,k:15,p:1,l:0.1,s:2.4},
+    {n:'Semangka',i:'🍉',kal:45,k:11,p:0.6,l:0.2,s:0.4},
+    {n:'Pepaya',i:'🍈',kal:55,k:14,p:0.5,l:0.1,s:1.8},
+    {n:'Mangga',i:'🥭',kal:99,k:25,p:1.4,l:0.6,s:1.6},
+    {n:'Melon',i:'🍈',kal:50,k:12,p:0.5,l:0.1,s:0.9},
+    {n:'Anggur',i:'🍇',kal:70,k:18,p:0.6,l:0.2,s:0.9},
+    {n:'Pir',i:'🍐',kal:75,k:19,p:0.5,l:0.1,s:3.1},
+  ],
+  Lauk:[
+    {n:'Perkedel',i:'🫓',kal:140,k:12,p:5,l:8,s:1},
+    {n:'Bakwan',i:'🥞',kal:155,k:15,p:4,l:9,s:1.5},
+    {n:'Rendang',i:'🍖',kal:195,k:4,p:19,l:12,s:0},
+    {n:'Sambal',i:'🌶️',kal:30,k:5,p:0.5,l:1,s:0.5},
+    {n:'Kerupuk',i:'🫙',kal:85,k:15,p:1,l:3,s:0},
+    {n:'Orek tempe',i:'🟤',kal:180,k:14,p:12,l:9,s:2},
+    {n:'Balado tahu',i:'🟥',kal:130,k:8,p:8,l:8,s:0.8},
+    {n:'Sate ayam',i:'🍢',kal:170,k:3,p:18,l:9,s:0},
+    {n:'Acar',i:'🥗',kal:20,k:4,p:0.5,l:0.1,s:1},
+  ],
+  Minuman:[
+    {n:'Susu putih',i:'🥛',kal:120,k:12,p:6,l:5,s:0},
+    {n:'Jus jeruk',i:'🧃',kal:80,k:20,p:1,l:0.2,s:0.5},
+    {n:'Air putih',i:'💧',kal:0,k:0,p:0,l:0,s:0},
+    {n:'Susu coklat',i:'🍫',kal:150,k:22,p:6,l:4,s:0},
+    {n:'Jus alpukat',i:'🥑',kal:160,k:14,p:2,l:11,s:5},
+    {n:'Teh manis',i:'🍵',kal:60,k:15,p:0,l:0,s:0},
+  ],
+};
+
+const CATS = ['Karbohidrat','Protein','Sayur','Buah','Lauk','Minuman'];
+let slots = {karbo:null,protein:null,sayur:null,buah:null,lauk:null,minum:null};
+let activeCat = 'Karbohidrat';
+let activeSlotId = null;
+let selectedFood = null;
+let savedMenus = [];
+
+function renderSlots(){
+  const lb = document.getElementById('lunchbox');
+  lb.innerHTML='';
+  SLOTS.forEach(sl => {
+    const d = document.createElement('div');
+    d.className='slot'+(sl.wide?' slot-wide':'')+(sl.drink?' slot-drink':'');
+    if(activeSlotId===sl.id) d.classList.add('active-slot');
+    if(slots[sl.id]) d.classList.add('filled');
+    if(slots[sl.id]){
+      d.innerHTML=`<button class="del-btn" onclick="delSlot(event,'${sl.id}')">✕</button><span class="s-icon">${slots[sl.id].i}</span><span class="s-name">${slots[sl.id].n}</span>`;
+    } else {
+      d.innerHTML=`<span class="s-icon" style="font-size:20px;opacity:0.25;">+</span><span class="s-label">${sl.label}</span>`;
+    }
+    d.addEventListener('click', ()=>tapSlot(sl));
+    lb.appendChild(d);
+  });
+}
+
+function tapSlot(sl){
+  activeSlotId = sl.id;
+  activeCat = sl.cat;
+  selectedFood = null;
+  renderSlots();
+  renderCats();
+  renderFoods();
+  updateHint();
+  document.getElementById('add-btn').classList.remove('show');
+}
+
+function delSlot(e, id){
+  e.stopPropagation();
+  slots[id]=null;
+  renderSlots();
+  updateNutri();
+}
+
+function renderCats(){
+  const ct = document.getElementById('cat-tabs');
+  ct.innerHTML='';
+  CATS.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='cat-btn'+(c===activeCat?' active':'');
+    b.textContent=c;
+    b.onclick=()=>{activeCat=c;activeSlotId=null;selectedFood=null;renderCats();renderFoods();renderSlots();updateHint();document.getElementById('add-btn').classList.remove('show');};
+    ct.appendChild(b);
+  });
+}
+
+function renderFoods(){
+  const g=document.getElementById('food-grid');
+  g.innerHTML='';
+  (FOODS[activeCat]||[]).forEach(f=>{
+    const d=document.createElement('div');
+    d.className='food-card'+(selectedFood===f?' sel':'');
+    d.innerHTML=`<span class="fc-icon">${f.i}</span><div class="fc-name">${f.n}</div><div class="fc-kal">${f.kal} kkal</div>`;
+    d.addEventListener('click',()=>{selectedFood=f;renderFoods();updateHint();document.getElementById('add-btn').classList.toggle('show', true);});
+    g.appendChild(d);
+  });
+}
+
+function updateHint(){
+  const h=document.getElementById('hint');
+  if(selectedFood && activeSlotId){
+    h.textContent=`Tap "Masukkan ke Kotak" untuk menaruh ${selectedFood.n} di slot ${SLOTS.find(s=>s.id===activeSlotId).label}`;
+    h.className='hint ok';
+  } else if(selectedFood){
+    h.textContent=`${selectedFood.n} dipilih — sekarang tap slot di kotak untuk menaruhnya!`;
+    h.className='hint ok';
+  } else if(activeSlotId){
+    const sl=SLOTS.find(s=>s.id===activeSlotId);
+    h.textContent=`Slot ${sl.label} aktif — pilih makanan di bawah`;
+    h.className='hint';
+  } else {
+    h.textContent='Tap slot di kotak, atau pilih kategori dan makanan dulu';
+    h.className='hint';
+  }
+}
+
+function addSelected(){
+  if(!selectedFood) return;
+  let targetId = activeSlotId;
+  if(!targetId){
+    const sl=SLOTS.find(s=>s.cat===activeCat);
+    if(sl) targetId=sl.id;
+  }
+  if(!targetId){showStatus('Tap dulu slot di kotak mana mau diisi!');return;}
+  const sl=SLOTS.find(s=>s.id===targetId);
+  if(sl.cat!==activeCat){showStatus('Makanan ini tidak sesuai kategori slot tersebut!');return;}
+  slots[targetId]=selectedFood;
+  selectedFood=null;
+  activeSlotId=null;
+  renderSlots();
+  renderFoods();
+  updateNutri();
+  updateHint();
+  document.getElementById('add-btn').classList.remove('show');
+}
+
+function updateNutri(){
+  let kal=0,k=0,p=0,l=0,s=0;
+  Object.values(slots).forEach(f=>{if(f){kal+=f.kal;k+=f.k;p+=f.p;l+=f.l;s+=f.s;}});
+  document.getElementById('kal').textContent=Math.round(kal);
+  const set=(id,v,max,unit)=>{
+    document.getElementById('bf-'+id).style.width=Math.min(100,v/max*100).toFixed(0)+'%';
+    document.getElementById('bv-'+id).textContent=v.toFixed(0)+unit;
+  };
+  set('k',k,120,'g');set('p',p,60,'g');set('l',l,50,'g');set('s',s,20,'g');
+}
+
+function resetBox(){
+  slots={karbo:null,protein:null,sayur:null,buah:null,lauk:null,minum:null};
+  activeSlotId=null;selectedFood=null;
+  renderSlots();renderFoods();updateNutri();updateHint();
+  document.getElementById('add-btn').classList.remove('show');
+  showStatus('Kotak dikosongkan');
+}
+
+function saveMenu(){
+  const filled=Object.values(slots).filter(Boolean);
+  if(!filled.length){showStatus('Isi dulu kotaknya ya!');return;}
+  const icons=SLOTS.map(sl=>slots[sl.id]?slots[sl.id].i:'·').join(' ');
+  const kal=Object.values(slots).reduce((s,f)=>s+(f?f.kal:0),0);
+  savedMenus.push({icons,kal:Math.round(kal)});
+  const sw=document.getElementById('saved-wrap');
+  sw.style.display='block';
+  document.getElementById('saved-items').innerHTML=savedMenus.map((m,i)=>
+    `<div class="saved-item">${i+1}. ${m.icons} — ${m.kal} kkal</div>`
+  ).join('');
+  showStatus('Menu tersimpan!');
+}
+
+function showStatus(msg){
+  const s=document.getElementById('status');
+  s.textContent=msg;
+  setTimeout(()=>s.textContent='',2500);
+}
+
+renderCats();renderFoods();renderSlots();updateNutri();updateHint();
+</script>
